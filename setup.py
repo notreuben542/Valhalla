@@ -4,7 +4,7 @@ import pybind11
 ext_modules = [
     Extension(
         "matching_engine",
-        ["cpp_engine/bindings.cpp", "cpp_engine/OrderBook.cpp"],
+        ["cpp_engine/bindings.cpp", "cpp_engine/OrderBook.cpp","cpp_engine/market_data.cpp"],
         include_dirs=[pybind11.get_include()],
         language="c++",
     )

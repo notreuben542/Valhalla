@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.14)
 project(cpp_engine LANGUAGES CXX)
 
+#Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(nlohmann_json 3.2.0 REQUIRED)
 
 # Find Python and pybind11
 find_package(Python COMPONENTS Interpreter Development REQUIRED)

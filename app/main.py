@@ -1,17 +1,23 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from app.routes import order_routes
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(title="Crypto Matching Engine", version="1.0.0")
 
 app.include_router(order_routes.router, prefix="/api/v1",tags=["orders"])
 
-
+app.add_middleware(CORSMiddleware,
+    allow_origins=["*"],  # change for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],)
 
 @app.get("/")
 def root():
     return JSONResponse(content={"message": "Crypto Matching Engine is running."})
+
 
 def main():
     import uvicorn

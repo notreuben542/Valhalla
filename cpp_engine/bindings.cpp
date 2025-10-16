@@ -41,5 +41,8 @@ PYBIND11_MODULE(matching_engine, m) {
     py::class_<OrderBook>(m, "OrderBook")
         .def(py::init<const std::string&>())
         .def("add_order", &OrderBook::addOrder)
-        .def("match", &OrderBook::match);
+        .def("match", &OrderBook::match)
+        .def("market_order", &OrderBook::marketOrder)
+        .def("get_bbo", &OrderBook::getBBO)
+        .def("get_snapshot", &OrderBook::getSnapshot);
 }

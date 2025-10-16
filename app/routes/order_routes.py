@@ -40,5 +40,5 @@ async def submit_order(order_request: Request):
     return {
         "status": "success",
         "symbol": symbol,
-        "trades": trade_list
+       
     }
