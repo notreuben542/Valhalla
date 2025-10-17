@@ -5,8 +5,8 @@
 #include <functional>
 
 
-static std::atomic<uint64_t> trade_id_counter{1}; // Atomic counter for trade IDs 
-
+static std::atomic<uint64_t> trade_id_counter{1}; // Atomic counter for trade IDs
+std::atomic<uint64_t> OrderBook::order_id_counter{1}; // Atomic counter for order IDs
 
 OrderBook::OrderBook(const std::string&sym):symbol(sym),bids([](const Order& a,const Order&b){
 
@@ -26,31 +26,36 @@ OrderBook::OrderBook(const std::string&sym):symbol(sym),bids([](const Order& a,c
 {}
 
 
-void OrderBook::addOrder(double price, double quantity, std::string side_str, std::string type_str){
+std::vector<Trade> OrderBook::addOrder(double price, double quantity, std::string side_str, std::string type_str){
     std::lock_guard<std::mutex> lock(mtx);
-    static std::atomic<uint64_t> order_id_counter{1}; // Atomic counter for order IDs
 
+    std::vector<Trade> executed_trades;
     Side side = (side_str == "BUY") ? Side::BUY : Side::SELL;
     OrderType type = (type_str == "LIMIT") ? OrderType::LIMIT : OrderType::MARKET;
 
     Order order(order_id_counter.fetch_add(1, std::memory_order_relaxed), side, type, price, quantity);
 
     if(type == OrderType::MARKET){
-        marketOrder(order);
-        return;
+       executed_trades = marketOrder(order);
     }
     else {
         // Limit order
-        if (order.side == Side::BUY) bids.push(order);
-        else asks.push(order);
-       auto matched_trades = match();
+        if (order.side == Side::BUY) {
+            bids.push(order);
+            bid_levels[price] += quantity;
+        } else {
+            asks.push(order);
+            ask_levels[price] += quantity;
+        }
+        executed_trades = limitOrder(order);
+        
 
-       for(const auto& trade: matched_trades){
+       for(const auto& trade: executed_trades){
             updateLevel(Side::BUY, trade.price, -trade.quantity);
             updateLevel(Side::SELL, trade.price, -trade.quantity);
        }
     }
-
+      return executed_trades;
      
 }
 
@@ -58,7 +63,7 @@ void OrderBook::addOrder(double price, double quantity, std::string side_str, st
 
 //Matching engine
 
-std::vector<Trade> OrderBook::match(){
+std::vector<Trade> OrderBook::limitOrder(Order& order){
     std::vector<Trade> newTrades;
 
     while(!bids.empty() && !asks.empty()){
@@ -80,10 +85,15 @@ std::vector<Trade> OrderBook::match(){
             ).count();
             trade.maker_order_id = top_ask.order_id;
             trade.taker_order_id = top_bid.order_id;
-            trade.aggressor_side = Side::BUY;
+            trade.aggressor_side = (order.side == Side::BUY) ? Side::BUY : Side::SELL;
 
             newTrades.push_back(trade);
             trades.push_back(trade);
+
+
+            if(trade_callback){
+                trade_callback(trade);
+            }
 
             // Update remaining quantities
             top_bid.quantity -= trade_quantity;
@@ -126,6 +136,9 @@ std::vector<Trade> OrderBook::marketOrder(Order& order){
 
             trades.push_back(trade);
             trades_executed.push_back(trade);
+            if(trade_callback){
+                trade_callback(trade);
+            }
             order.quantity -= trade_quantity;
             top_ask.quantity -= trade_quantity;
 
@@ -157,6 +170,9 @@ std::vector<Trade> OrderBook::marketOrder(Order& order){
 
             trades.push_back(trade);
             trades_executed.push_back(trade);
+            if(trade_callback){
+                trade_callback(trade);
+            }
 
             order.quantity -= trade_quantity;
             top_bid.quantity -= trade_quantity;

@@ -1,8 +1,10 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/functional.h>        
 #include "include/order.hpp"
 #include "include/order_book.hpp"
 #include "include/trade.hpp"
+#include "include/pybind11_json/include/pybind11_json/pybind11_json.hpp"
 
 namespace py = pybind11;
 
@@ -41,8 +43,13 @@ PYBIND11_MODULE(matching_engine, m) {
     py::class_<OrderBook>(m, "OrderBook")
         .def(py::init<const std::string&>())
         .def("add_order", &OrderBook::addOrder)
-        .def("match", &OrderBook::match)
+        .def("limit_order", &OrderBook::limitOrder)
         .def("market_order", &OrderBook::marketOrder)
+        .def_readwrite("trade_callback", &OrderBook::trade_callback)
         .def("get_bbo", &OrderBook::getBBO)
-        .def("get_snapshot", &OrderBook::getSnapshot);
+        .def("get_snapshot",[](OrderBook&ob, size_t depth){
+            nlohmann::json snap = ob.getSnapshot(depth);
+            return snap;
+        });
+        
 }

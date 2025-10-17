@@ -1,12 +1,15 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from app.routes import order_routes
+from app.routes import order_routes,marketdata_routes,tradedata_routes
 from fastapi.middleware.cors import CORSMiddleware
+
 
 
 app = FastAPI(title="Crypto Matching Engine", version="1.0.0")
 
 app.include_router(order_routes.router, prefix="/api/v1",tags=["orders"])
+app.include_router(marketdata_routes.router, prefix="/api/v1",tags=["marketdata"] )
+app.include_router(tradedata_routes.router, prefix="/api/v1",tags=["trades"] )
 
 app.add_middleware(CORSMiddleware,
     allow_origins=["*"],  # change for production

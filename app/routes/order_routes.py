@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Request
 from decimal import Decimal
+from app.books.books import order_books, locks
 import matching_engine
 
 router = APIRouter()
 
-# Maintain one order book per symbol (C++ object)
-order_books: dict[str, matching_engine.OrderBook] = {}
+
+
 
 
 @router.post("/orders")
