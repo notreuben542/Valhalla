@@ -9,7 +9,7 @@ It supports real-time order matching, best bid and offer (BBO) dissemination, an
 
 ![architecture](docs/architecture.png)
 ## Directory Structure
-
+```bash
 ├── app
 │   ├── books                # Order book logic
 │   ├── routes               # WebSocket and REST endpoints
@@ -30,7 +30,7 @@ It supports real-time order matching, best bid and offer (BBO) dissemination, an
 ├── setup.py
 ├── pyproject.toml
 └── README.md
-
+```
 
 ## Overview
 
