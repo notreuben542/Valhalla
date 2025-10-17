@@ -4,7 +4,7 @@
 #include <chrono>
 
 enum class Side { BUY,SELL};
-enum class OrderType { LIMIT, MARKET };
+enum class OrderType { LIMIT, MARKET,IOC,FOK};
 using Price  = double;
 using Qty    = double;
 using Timestamp = uint64_t;

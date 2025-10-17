@@ -12,6 +12,8 @@ struct Trade {
     uint64_t maker_order_id;
     uint64_t taker_order_id;
     Side aggressor_side;
+    double maker_fee = 0.0;
+    double taker_fee = 0.0;
 };
 
 

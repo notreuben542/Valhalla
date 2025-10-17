@@ -23,6 +23,8 @@ class OrderBook{
         std::vector<Trade> trades;
         std::mutex mtx;
         static std::atomic<uint64_t> order_id_counter;
+        double maker_fee_rate = 0.001; 
+        double taker_fee_rate = 0.002; 
         
 
 
@@ -31,9 +33,12 @@ class OrderBook{
         std::vector<Trade> addOrder(double price, double quantity, std::string side, std::string type);
         std::vector<Trade> limitOrder(Order& order);
         std::vector<Trade> marketOrder(Order& order);
+        std::vector<Trade> iocOrder(Order& order);
+        std::vector<Trade> fokOrder(Order& order);
         void updateLevel(Side side,double price,double quantity);
         std::pair<std::pair<double, double>, std::pair<double, double>> getBBO() const;
         nlohmann::json getSnapshot(size_t depth) const;
         std::function<void (const Trade&)> trade_callback;
+        double calculateFee(Side side, double amount) const;
         
 };
