@@ -3,13 +3,13 @@
 A high-performance, REG NMS–inspired cryptocurrency matching engine built in C++ with Python bindings and a FastAPI interface.  
 It supports real-time order matching, best bid and offer (BBO) dissemination, and live trade execution streaming. The engine is optimized for low latency and high throughput.
 
----
 
 
 ## Architecture
+
 ![architecture](docs/architecture.png)
 ## Directory Structure
-.
+
 ├── app
 │   ├── books                # Order book logic
 │   ├── routes               # WebSocket and REST endpoints
@@ -30,13 +30,13 @@ It supports real-time order matching, best bid and offer (BBO) dissemination, an
 ├── setup.py
 ├── pyproject.toml
 └── README.md
----
+
 
 ## Overview
 
 The matching engine is responsible for maintaining the order book, calculating the BBO, executing trades based on strict price-time priority, and streaming both market data and trade execution events to connected clients.
 
----
+
 
 ## Matching Engine Logic
 
@@ -55,7 +55,7 @@ The matching engine is responsible for maintaining the order book, calculating t
 - **IOC (Immediate or Cancel)** - Executes immediately against the order book and cancels any remaining unfilled portions.
 - **FOK (Fill or Kill)** - Must be filled in its entirety immediately or canceled completely.
 
----
+
 
 ## Data Generation and APIs
 
