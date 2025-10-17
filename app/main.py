@@ -2,8 +2,10 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from app.routes import order_routes,marketdata_routes,tradedata_routes
 from fastapi.middleware.cors import CORSMiddleware
+from app.utils.logging import setup_logging
 
-
+setup_logging()
+logger = logging.getLogger("main")
 
 app = FastAPI(title="Crypto Matching Engine", version="1.0.0")
 
