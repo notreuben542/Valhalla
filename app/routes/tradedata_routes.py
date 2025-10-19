@@ -2,7 +2,6 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.books.books import order_books
 import asyncio
 import logging
-
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
@@ -15,6 +14,7 @@ async def get_trade_data(websocket: WebSocket):
     logger.info("Client connected: %s", websocket.client)
 
     loop = asyncio.get_event_loop()
+    book = order_books.get("BTC-USD")
 
     # Callback for new trades
     def on_trade(trade):
@@ -44,7 +44,7 @@ async def get_trade_data(websocket: WebSocket):
             clients.discard(client)
 
     # Assign the callback
-    order_books.trade_callback = on_trade
+    book.trade_callback = on_trade
 
     try:
         while True:

@@ -27,13 +27,9 @@ async def get_market_data(websocket: WebSocket):
             snapshot = book.get_snapshot(5)
             msg = {"snapshot": snapshot}
 
-            try:
-                await websocket.send_json(msg)
-            except Exception as e:
-                logger.warning("Failed to send snapshot to client %s: %s", websocket.client, e)
-                clients.discard(websocket)
-                break
-
+          
+            await websocket.send_json(msg)
+            
     except WebSocketDisconnect:
         clients.discard(websocket)
         logger.info("Client disconnected: %s", websocket.client)

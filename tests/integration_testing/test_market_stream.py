@@ -55,6 +55,7 @@ async def ws_client(client_id, stop_event):
                 metrics["ws_latency"].append(duration)
                 data = json.loads(msg)
                 #snap = data.get("snapshot", {})
+                print(data)
                 
                 
               
@@ -87,7 +88,7 @@ async def main():
     print(f"HTTP Orders sent:   {metrics['http_orders_sent']}")
     print(f"HTTP errors: {metrics['http_errors']}")
     print(f"HTTP duration: {http_duration:.2f}s")
-    print(f"HTTP throughput: {metrics['http_orders_sent']/http_duration:.2f} orders/sec\n")
+    
 
     # Step 3: Keep WS clients alive for LIVE_DURATION
     print(f"Streaming WebSocket messages for {LIVE_DURATION}s...")
@@ -105,6 +106,7 @@ async def main():
     print(f"WS errors: {metrics['ws_errors']}")
     print(f"WS throughput: {metrics['ws_messages_received']/LIVE_DURATION:.2f} msg/sec")
     print(f"WS latency (s) | avg: {avg_latency:.6f}, p50: {p50:.6f}, p95: {p95:.6f}")
+    print(f"HTTP throughput: {metrics['http_orders_sent']/http_duration:.2f} orders/sec\n")
 
 if __name__ == "__main__":
     asyncio.run(main())
